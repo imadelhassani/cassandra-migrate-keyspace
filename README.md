@@ -36,11 +36,11 @@ Installation guide : https://docs.datastax.com/en/dsbulk/doc/dsbulk/install/dsbu
 
 use the script dsbulk_export with the follow options: 
 
-./dsbulk_export keyspacename user password backupname
+./export_dsbulk keyspacename user password backupname
 
 example : 
 
-./dsbulk_export keyspace1 cassandra cassandra bkp_1
+./export_dsbulk keyspace1 cassandra cassandra bkp_1
 
 result: bkp_1.tar.gz
 
@@ -64,13 +64,13 @@ the file bkp_1.tar.gz will be used to restore data in another node
 
 use the script dsbulk_import with the follow options: 
 
-./dsbulk_export tarfile.tar.gz user password backupname
+./import_dsbulk tarfile.tar.gz user password backupname
 
 ./import_dsbulk tarfile user password backupname
 
 example : 
 
-./dsbulk_import keyspace1.tar.gz cassandra cassandra bkp_1
+./import_dsbulk keyspace1.tar.gz cassandra cassandra bkp_1
 
 result: the data will be imported directly to the database
 
