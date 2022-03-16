@@ -1,0 +1,42 @@
+#!bin/bash
+
+
+
+#exporting python and dsbulk
+export PATH=/dsbulk-1.8.0/bin:$PATH
+export PYTHONIOENCODING=utf-8
+
+keyspace_n=$1
+user_auth=$2
+pass_auth=$3
+bkp_name=$4
+
+
+#getting tables names
+
+cqlsh -u $user_auth -p $pass_auth -e "SELECT table_name FROM system_schema.tables WHERE keyspace_name = '${keyspace_n}';" > tables.file
+
+
+# stocking in file and cleaning
+
+sed 's/^[ \t]*//' tables.file > tables.file1
+sed -e '1,3d;$d' tables.file1 > tables.file.tmp
+sed -e '$d' tables.file.tmp > tables.file
+
+
+#rm tmp files
+rm tables.file.tmp tables.file1
+
+
+cat tables.file | while read line
+do
+    dsbulk unload -u $user_auth -p $pass_auth -url ${bkp_name}/${line}_csv -k $keyspace_n -t $line -header true
+done
+
+
+
+echo "Dump keyspace and table creation instruction"
+cqlsh -e "desc \"${keyspace_n}\";" > "${bkp_name}/${keyspace_n}.sql" -u $user_auth -p $pass_auth
+​
+echo "Create tar file: ${keyspace_n}.tar.gz"
+tar -czf ${keyspace_n}.tar.gz $bkp_name
